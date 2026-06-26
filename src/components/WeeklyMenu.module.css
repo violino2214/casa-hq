@@ -1,0 +1,223 @@
+.card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: 22px;
+  box-shadow: var(--shadow-sm);
+  border: 1.5px solid var(--beige);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.header {}
+
+.titolo {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.sub {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.riga {}
+
+/* ── Visualizzazione ── */
+.giornoCard {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 14px;
+  background: var(--cream);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  text-align: left;
+  transition: all 0.15s;
+  position: relative;
+  cursor: pointer;
+}
+
+.giornoCard:hover {
+  background: var(--cream-dark);
+  border-color: var(--beige-mid);
+}
+
+.giornoCard:hover .editHint { opacity: 1; }
+
+.giornoLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 54px;
+  gap: 1px;
+}
+
+.giornoEmoji { font-size: 1.2rem; line-height: 1; }
+
+.giornoNome {
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
+
+.pasti {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pasto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.pastoLabel {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-muted);
+}
+
+.pastoValore {
+  font-size: 0.83rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.vuoto { font-style: italic; color: var(--text-muted); font-size: 0.8rem; }
+
+.divisore {
+  width: 1px;
+  height: 30px;
+  background: var(--beige);
+  flex-shrink: 0;
+}
+
+.noteTag {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  background: var(--beige);
+  padding: 2px 8px;
+  border-radius: 10px;
+  white-space: nowrap;
+  max-width: 130px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 520px) {
+  .noteTag { display: none; }
+  .divisore { display: none; }
+  .pasti { flex-direction: column; align-items: flex-start; gap: 4px; }
+}
+
+.editHint {
+  position: absolute;
+  right: 12px;
+  font-size: 0.75rem;
+  opacity: 0;
+  transition: opacity 0.15s;
+  color: var(--text-muted);
+}
+
+/* ── Modifica ── */
+.editBox {
+  background: #f0f6f1;
+  border: 1.5px solid var(--sage-light);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.editHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.editGiorno {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--sage-dark);
+}
+
+.editAzioni {
+  display: flex;
+  gap: 6px;
+}
+
+.btnSalva {
+  padding: 5px 14px;
+  border-radius: 20px;
+  background: var(--sage);
+  color: white;
+  font-size: 0.78rem;
+  font-weight: 700;
+  transition: background 0.15s;
+}
+
+.btnSalva:hover { background: var(--sage-dark); }
+
+.btnAnnulla {
+  padding: 5px 10px;
+  border-radius: 20px;
+  background: var(--cream-dark);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  border: 1.5px solid var(--beige-mid);
+  transition: background 0.15s;
+}
+
+.btnAnnulla:hover { background: var(--beige); }
+
+.editCampi {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.editCampo {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+
+.editLabel {
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sage-dark);
+}
+
+.editInput {
+  padding: 7px 12px;
+  border: 1.5px solid var(--sage-light);
+  border-radius: var(--radius-sm);
+  background: var(--white);
+  color: var(--text-primary);
+  font-size: 0.87rem;
+  transition: border-color 0.15s;
+}
+
+.editInput:focus { border-color: var(--sage); }

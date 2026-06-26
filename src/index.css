@@ -1,0 +1,75 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --cream: #faf8f3;
+  --cream-dark: #f2ede3;
+  --beige: #e8dfc8;
+  --beige-mid: #d6c9ae;
+  --sage: #7a9e7e;
+  --sage-light: #a8c5ac;
+  --sage-dark: #5a7e5e;
+  --powder: #8fb0c8;
+  --powder-light: #bcd4e6;
+  --powder-dark: #6090ae;
+  --rose: #d4877a;
+  --rose-light: #e8b0a6;
+  --amber: #c9973a;
+  --amber-light: #e8c07a;
+  --text-primary: #3a3228;
+  --text-secondary: #6b5f52;
+  --text-muted: #9a8e82;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(58,50,40,0.08);
+  --shadow-md: 0 4px 12px rgba(58,50,40,0.10);
+  --shadow-lg: 0 8px 24px rgba(58,50,40,0.12);
+  --radius-sm: 10px;
+  --radius-md: 16px;
+  --radius-lg: 22px;
+  --radius-xl: 30px;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background-color: var(--cream);
+  color: var(--text-primary);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+button {
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  border: none;
+  outline: none;
+}
+
+input, textarea, select {
+  font-family: 'Nunito', sans-serif;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: 2px solid var(--sage-light);
+  outline-offset: 1px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--cream-dark); }
+::-webkit-scrollbar-thumb { background: var(--beige-mid); border-radius: 3px; }
+
+/* Utility */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
