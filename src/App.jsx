@@ -8,6 +8,7 @@ import TaskCard    from './components/TaskCard'
 import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
 import WeeklyTasks from './components/WeeklyTasks'
+import TodayView from './components/TodayView'
 import styles      from './App.module.css'
 
 function filtraTasks(tasks, filtro) {
@@ -396,6 +397,7 @@ export default function App() {
 
         <nav className={styles.navSezioni}>
           {[
+            { id: 'oggi', label: '☀️ Oggi' },
             { id: 'attivita', label: '📋 Attività' },
             { id: 'settimana', label: '🗓️ Settimana' },
             { id: 'spesa',    label: '🛒 Spesa'    },
@@ -410,6 +412,16 @@ export default function App() {
             </button>
           ))}
         </nav>
+
+        {sezione === 'oggi' && (
+          <section className={styles.section}>
+            <TodayView
+              tasks={tasks}
+              onToggle={toggleTask}
+              onElimina={eliminaTask}
+            />
+          </section>
+        )}
 
         {sezione === 'attivita' && (
           <div className={styles.sezioneAttivita}>
