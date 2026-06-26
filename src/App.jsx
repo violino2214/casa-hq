@@ -9,6 +9,7 @@ import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
 import WeeklyTasks from './components/WeeklyTasks'
 import TodayView from './components/TodayView'
+import NotesBoard from './components/NotesBoard'
 import styles      from './App.module.css'
 
 function filtraTasks(tasks, filtro) {
@@ -402,6 +403,7 @@ export default function App() {
             { id: 'settimana', label: '🗓️ Settimana' },
             { id: 'spesa',    label: '🛒 Spesa'    },
             { id: 'menu',     label: '🍽️ Menu'     },
+            { id: 'bacheca', label: '💬 Bacheca' },
           ].map(s => (
             <button
               key={s.id}
@@ -476,6 +478,12 @@ export default function App() {
         {sezione === 'spesa' && (
           <section className={styles.section}>
             <GroceryList />
+          </section>
+        )}
+
+        {sezione === 'bacheca' && (
+          <section className={styles.section}>
+            <NotesBoard />
           </section>
         )}
 
