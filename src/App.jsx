@@ -22,14 +22,30 @@ function filtraTasks(tasks, filtro) {
   }
 }
 
+function normalizzaPersona(persona) {
+  const p = String(persona || '').trim().toLowerCase()
+
+  if (['viola', 'vi'].includes(p)) return 'vi'
+  if (['marti', 'martina'].includes(p)) return 'marti'
+  if (['isa', 'isabella'].includes(p)) return 'isa'
+  if (['dav', 'davide'].includes(p)) return 'dav'
+  if (['tutti', 'famiglia', 'mamma', 'papà', 'papa', 'nonna'].includes(p)) return 'tutti'
+
+  return p || 'tutti'
+}
+
 function filtraPerPersona(tasks, personaFiltro) {
   if (personaFiltro === 'all') return tasks
 
-  if (personaFiltro === 'tutti') {
-    return tasks.filter(t => t.persona === 'tutti')
-  }
+  return tasks.filter(t => {
+    const personaTask = normalizzaPersona(t.persona)
 
-  return tasks.filter(t => t.persona === personaFiltro || t.persona === 'tutti')
+    if (personaFiltro === 'tutti') {
+      return personaTask === 'tutti'
+    }
+
+    return personaTask === personaFiltro || personaTask === 'tutti'
+  })
 }
 
 function daSupabaseTask(row) {
@@ -37,7 +53,7 @@ function daSupabaseTask(row) {
     id: row.id,
     titolo: row.title,
     categoria: row.category,
-    persona: row.assigned_to,
+    persona: normalizzaPersona(row.assigned_to),
     priorita: row.priority,
     giorno: row.day,
     note: row.notes || '',
@@ -50,7 +66,7 @@ function aSupabaseTask(task) {
   return {
     title: task.titolo,
     category: task.categoria,
-    assigned_to: task.persona,
+    assigned_to: normalizzaPersona(task.persona),
     priority: task.priorita,
     day: task.giorno,
     notes: task.note || '',
