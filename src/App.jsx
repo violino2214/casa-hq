@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { DEMO_TASKS } from './data'
+import React, { useEffect, useState } from 'react'
+import { supabase } from './lib/supabase'
 import StatsCards  from './components/StatsCards'
 import FilterBar   from './components/FilterBar'
 import TaskForm    from './components/TaskForm'
@@ -18,20 +18,118 @@ function filtraTasks(tasks, filtro) {
   }
 }
 
+function daSupabaseTask(row) {
+  return {
+    id: row.id,
+    titolo: row.title,
+    categoria: row.category,
+    persona: row.assigned_to,
+    priorita: row.priority,
+    giorno: row.day,
+    note: row.notes || '',
+    completata: row.completed,
+    creatoIl: row.created_at,
+  }
+}
+
+function aSupabaseTask(task) {
+  return {
+    title: task.titolo,
+    category: task.categoria,
+    assigned_to: task.persona,
+    priority: task.priorita,
+    day: task.giorno,
+    notes: task.note || '',
+    completed: task.completata || false,
+  }
+}
+
 // ─── App ──────────────────────────────────────────────────────
 export default function App() {
-  const [tasks, setTasks]       = useState(DEMO_TASKS)
+  const [tasks, setTasks]       = useState([])
   const [filtro, setFiltro]     = useState('tutte')
   const [sezione, setSezione]   = useState('attivita') // 'attivita' | 'spesa' | 'menu'
+  const [loading, setLoading]   = useState(true)
+  const [errore, setErrore]     = useState('')
 
-  // CRUD
-  const aggiungiTask = nuovaTask => setTasks(prev => [nuovaTask, ...prev])
+  useEffect(() => {
+    caricaTasks()
+  }, [])
 
-  const toggleTask = id =>
-    setTasks(prev => prev.map(t => t.id === id ? { ...t, completata: !t.completata } : t))
+  async function caricaTasks() {
+    setLoading(true)
+    setErrore('')
 
-  const eliminaTask = id =>
+    const { data, error } = await supabase
+      .from('tasks')
+      .select('*')
+      .order('created_at', { ascending: false })
+
+    if (error) {
+      console.error(error)
+      setErrore('Non riesco a caricare le attività da Supabase.')
+      setLoading(false)
+      return
+    }
+
+    setTasks((data || []).map(daSupabaseTask))
+    setLoading(false)
+  }
+
+  async function aggiungiTask(nuovaTask) {
+    setErrore('')
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .insert(aSupabaseTask(nuovaTask))
+      .select()
+      .single()
+
+    if (error) {
+      console.error(error)
+      setErrore('Non riesco ad aggiungere questa attività.')
+      return
+    }
+
+    setTasks(prev => [daSupabaseTask(data), ...prev])
+  }
+
+  async function toggleTask(id) {
+    const task = tasks.find(t => t.id === id)
+    if (!task) return
+
+    const nuovoValore = !task.completata
+
+    setTasks(prev => prev.map(t => t.id === id ? { ...t, completata: nuovoValore } : t))
+
+    const { error } = await supabase
+      .from('tasks')
+      .update({ completed: nuovoValore })
+      .eq('id', id)
+
+    if (error) {
+      console.error(error)
+      setErrore('Non riesco ad aggiornare questa attività.')
+      setTasks(prev => prev.map(t => t.id === id ? { ...t, completata: task.completata } : t))
+    }
+  }
+
+  async function eliminaTask(id) {
+    const vecchieTasks = tasks
+
     setTasks(prev => prev.filter(t => t.id !== id))
+
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error(error)
+      setErrore('Non riesco a eliminare questa attività.')
+      setTasks(vecchieTasks)
+    }
+  }
 
   const taskFiltrate = filtraTasks(tasks, filtro)
 
@@ -55,6 +153,15 @@ export default function App() {
         <section className={styles.section}>
           <StatsCards tasks={tasks} />
         </section>
+
+        {errore && (
+          <section className={styles.section}>
+            <div className={styles.vuoto}>
+              <span className={styles.vuotoEmoji}>⚠️</span>
+              <p>{errore}</p>
+            </div>
+          </section>
+        )}
 
         {/* ── Nav sezioni ── */}
         <nav className={styles.navSezioni}>
@@ -80,7 +187,12 @@ export default function App() {
 
             <FilterBar filtroAttivo={filtro} onFiltro={setFiltro} />
 
-            {taskFiltrate.length === 0 ? (
+            {loading ? (
+              <div className={styles.vuoto}>
+                <span className={styles.vuotoEmoji}>⏳</span>
+                <p>Carico le attività...</p>
+              </div>
+            ) : taskFiltrate.length === 0 ? (
               <div className={styles.vuoto}>
                 <span className={styles.vuotoEmoji}>🌿</span>
                 <p>Nessuna attività qui!</p>
