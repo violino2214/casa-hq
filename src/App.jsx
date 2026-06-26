@@ -7,6 +7,7 @@ import TaskForm    from './components/TaskForm'
 import TaskCard    from './components/TaskCard'
 import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
+import WeeklyTasks from './components/WeeklyTasks'
 import styles      from './App.module.css'
 
 function filtraTasks(tasks, filtro) {
@@ -396,6 +397,7 @@ export default function App() {
         <nav className={styles.navSezioni}>
           {[
             { id: 'attivita', label: '📋 Attività' },
+            { id: 'settimana', label: '🗓️ Settimana' },
             { id: 'spesa',    label: '🛒 Spesa'    },
             { id: 'menu',     label: '🍽️ Menu'     },
           ].map(s => (
@@ -447,6 +449,16 @@ export default function App() {
               </div>
             )}
           </div>
+        )}
+
+        {sezione === 'settimana' && (
+          <section className={styles.section}>
+            <WeeklyTasks
+              tasks={tasks}
+              onToggle={toggleTask}
+              onElimina={eliminaTask}
+            />
+          </section>
         )}
 
         {sezione === 'spesa' && (
