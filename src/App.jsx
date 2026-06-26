@@ -8,6 +8,7 @@ import QuickActions from './components/QuickActions'
 import TaskCard    from './components/TaskCard'
 import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
+import AppNav from './components/AppNav'
 import WeeklyTasks from './components/WeeklyTasks'
 import TodayView from './components/TodayView'
 import NotesBoard from './components/NotesBoard'
@@ -222,7 +223,7 @@ export default function App() {
   const [tasks, setTasks]       = useState([])
   const [filtro, setFiltro]     = useState('tutte')
   const [personaFiltro, setPersonaFiltro] = useState('all')
-  const [sezione, setSezione]   = useState('attivita')
+  const [sezione, setSezione]   = useState('oggi')
   const [loading, setLoading]   = useState(true)
   const [errore, setErrore]     = useState('')
 
@@ -398,25 +399,7 @@ export default function App() {
           </section>
         )}
 
-        <nav className={styles.navSezioni}>
-          {[
-            { id: 'oggi', label: '☀️ Oggi' },
-            { id: 'attivita', label: '📋 Attività' },
-            { id: 'settimana', label: '🗓️ Settimana' },
-            { id: 'persone', label: '👥 Persone' },
-            { id: 'spesa',    label: '🛒 Spesa'    },
-            { id: 'menu',     label: '🍽️ Menu'     },
-            { id: 'bacheca', label: '💬 Bacheca' },
-          ].map(s => (
-            <button
-              key={s.id}
-              onClick={() => setSezione(s.id)}
-              className={`${styles.navBtn} ${sezione === s.id ? styles.navBtnAttivo : ''}`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </nav>
+        <AppNav sezione={sezione} setSezione={setSezione} />
 
         {sezione === 'oggi' && (
           <section className={styles.section}>
