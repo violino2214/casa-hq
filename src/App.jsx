@@ -386,9 +386,11 @@ export default function App() {
       </header>
 
       <main className={styles.main}>
-        <section className={styles.section}>
-          <StatsCards tasks={tasks} />
-        </section>
+        {sezione !== 'oggi' && (
+          <section className={styles.section}>
+            <StatsCards tasks={tasks} />
+          </section>
+        )}
 
         {errore && (
           <section className={styles.section}>
