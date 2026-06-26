@@ -2,20 +2,34 @@ import React, { useEffect, useState } from 'react'
 import { supabase } from './lib/supabase'
 import StatsCards  from './components/StatsCards'
 import FilterBar   from './components/FilterBar'
+import MemberFilter from './components/MemberFilter'
 import TaskForm    from './components/TaskForm'
 import TaskCard    from './components/TaskCard'
 import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
 import styles      from './App.module.css'
 
-// ─── Helpers ──────────────────────────────────────────────────
 function filtraTasks(tasks, filtro) {
   switch (filtro) {
-    case 'tutte':      return tasks.filter(t => !t.completata)
-    case 'urgenti':    return tasks.filter(t => t.priorita === 'Alta' && !t.completata)
-    case 'completate': return tasks.filter(t => t.completata)
-    default:           return tasks.filter(t => t.categoria === filtro && !t.completata)
+    case 'tutte':
+      return tasks.filter(t => !t.completata)
+    case 'urgenti':
+      return tasks.filter(t => t.priorita === 'Alta' && !t.completata)
+    case 'completate':
+      return tasks.filter(t => t.completata)
+    default:
+      return tasks.filter(t => t.categoria === filtro && !t.completata)
   }
+}
+
+function filtraPerPersona(tasks, personaFiltro) {
+  if (personaFiltro === 'all') return tasks
+
+  if (personaFiltro === 'tutti') {
+    return tasks.filter(t => t.persona === 'tutti')
+  }
+
+  return tasks.filter(t => t.persona === personaFiltro || t.persona === 'tutti')
 }
 
 function daSupabaseTask(row) {
@@ -44,7 +58,6 @@ function aSupabaseTask(task) {
   }
 }
 
-// ─── Login ─────────────────────────────────────────────────────
 function LoginScreen() {
   const [email, setEmail]       = useState('')
   const [password, setPassword] = useState('')
@@ -181,13 +194,13 @@ function LoginScreen() {
   )
 }
 
-// ─── App ──────────────────────────────────────────────────────
 export default function App() {
   const [session, setSession]   = useState(null)
   const [authLoading, setAuthLoading] = useState(true)
 
   const [tasks, setTasks]       = useState([])
   const [filtro, setFiltro]     = useState('tutte')
+  const [personaFiltro, setPersonaFiltro] = useState('all')
   const [sezione, setSezione]   = useState('attivita')
   const [loading, setLoading]   = useState(true)
   const [errore, setErrore]     = useState('')
@@ -315,7 +328,7 @@ export default function App() {
     return <LoginScreen />
   }
 
-  const taskFiltrate = filtraTasks(tasks, filtro)
+  const taskFiltrate = filtraPerPersona(filtraTasks(tasks, filtro), personaFiltro)
 
   return (
     <div className={styles.app}>
@@ -385,6 +398,8 @@ export default function App() {
             <TaskForm onAggiungi={aggiungiTask} />
 
             <FilterBar filtroAttivo={filtro} onFiltro={setFiltro} />
+
+            <MemberFilter personaAttiva={personaFiltro} onPersona={setPersonaFiltro} />
 
             {loading ? (
               <div className={styles.vuoto}>
