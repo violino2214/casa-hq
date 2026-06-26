@@ -10,6 +10,7 @@ import WeeklyMenu  from './components/WeeklyMenu'
 import WeeklyTasks from './components/WeeklyTasks'
 import TodayView from './components/TodayView'
 import NotesBoard from './components/NotesBoard'
+import PeopleView from './components/PeopleView'
 import styles      from './App.module.css'
 
 function filtraTasks(tasks, filtro) {
@@ -401,6 +402,7 @@ export default function App() {
             { id: 'oggi', label: '☀️ Oggi' },
             { id: 'attivita', label: '📋 Attività' },
             { id: 'settimana', label: '🗓️ Settimana' },
+            { id: 'persone', label: '👥 Persone' },
             { id: 'spesa',    label: '🛒 Spesa'    },
             { id: 'menu',     label: '🍽️ Menu'     },
             { id: 'bacheca', label: '💬 Bacheca' },
@@ -468,6 +470,16 @@ export default function App() {
         {sezione === 'settimana' && (
           <section className={styles.section}>
             <WeeklyTasks
+              tasks={tasks}
+              onToggle={toggleTask}
+              onElimina={eliminaTask}
+            />
+          </section>
+        )}
+
+        {sezione === 'persone' && (
+          <section className={styles.section}>
+            <PeopleView
               tasks={tasks}
               onToggle={toggleTask}
               onElimina={eliminaTask}
