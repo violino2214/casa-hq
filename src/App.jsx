@@ -4,6 +4,7 @@ import StatsCards  from './components/StatsCards'
 import FilterBar   from './components/FilterBar'
 import MemberFilter from './components/MemberFilter'
 import TaskForm    from './components/TaskForm'
+import QuickActions from './components/QuickActions'
 import TaskCard    from './components/TaskCard'
 import GroceryList from './components/GroceryList'
 import WeeklyMenu  from './components/WeeklyMenu'
@@ -430,6 +431,8 @@ export default function App() {
         {sezione === 'attivita' && (
           <div className={styles.sezioneAttivita}>
             <TaskForm onAggiungi={aggiungiTask} />
+
+            <QuickActions onAggiungi={aggiungiTask} />
 
             <FilterBar filtroAttivo={filtro} onFiltro={setFiltro} />
 
