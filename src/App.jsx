@@ -44,17 +44,181 @@ function aSupabaseTask(task) {
   }
 }
 
+// ─── Login ─────────────────────────────────────────────────────
+function LoginScreen() {
+  const [email, setEmail]       = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading]   = useState(false)
+  const [errore, setErrore]     = useState('')
+
+  async function login(e) {
+    e.preventDefault()
+    setLoading(true)
+    setErrore('')
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    })
+
+    if (error) {
+      console.error(error)
+      setErrore('Credenziali non corrette oppure utente non confermato.')
+    }
+
+    setLoading(false)
+  }
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '24px',
+      background: 'linear-gradient(135deg, #f8efe3 0%, #edf4ea 50%, #eaf2f6 100%)'
+    }}>
+      <form
+        onSubmit={login}
+        style={{
+          width: '100%',
+          maxWidth: '420px',
+          background: 'rgba(255,255,255,0.86)',
+          border: '1px solid rgba(120,100,80,0.16)',
+          borderRadius: '28px',
+          padding: '32px',
+          boxShadow: '0 24px 70px rgba(80,60,40,0.14)',
+          backdropFilter: 'blur(14px)'
+        }}
+      >
+        <div style={{ textAlign: 'center', marginBottom: '26px' }}>
+          <div style={{ fontSize: '48px', marginBottom: '10px' }}>🏡</div>
+          <h1 style={{ margin: 0, fontSize: '32px', color: '#3f3a34' }}>Casa HQ</h1>
+          <p style={{ marginTop: '8px', color: '#7d746b' }}>
+            Accesso riservato alla famiglia
+          </p>
+        </div>
+
+        <label style={{ display: 'block', marginBottom: '8px', color: '#5d554d', fontWeight: 600 }}>
+          Email
+        </label>
+        <input
+          type="email"
+          value={email}
+          onChange={e => setEmail(e.target.value)}
+          placeholder="email famiglia"
+          required
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '14px 16px',
+            borderRadius: '16px',
+            border: '1px solid #ddd2c6',
+            marginBottom: '16px',
+            fontSize: '16px',
+            background: '#fffaf4'
+          }}
+        />
+
+        <label style={{ display: 'block', marginBottom: '8px', color: '#5d554d', fontWeight: 600 }}>
+          Password
+        </label>
+        <input
+          type="password"
+          value={password}
+          onChange={e => setPassword(e.target.value)}
+          placeholder="password"
+          required
+          style={{
+            width: '100%',
+            boxSizing: 'border-box',
+            padding: '14px 16px',
+            borderRadius: '16px',
+            border: '1px solid #ddd2c6',
+            marginBottom: '18px',
+            fontSize: '16px',
+            background: '#fffaf4'
+          }}
+        />
+
+        {errore && (
+          <p style={{
+            background: '#fff1f1',
+            color: '#8a3b3b',
+            padding: '12px 14px',
+            borderRadius: '14px',
+            fontSize: '14px',
+            marginBottom: '16px'
+          }}>
+            ⚠️ {errore}
+          </p>
+        )}
+
+        <button
+          type="submit"
+          disabled={loading}
+          style={{
+            width: '100%',
+            border: 'none',
+            borderRadius: '18px',
+            padding: '15px 18px',
+            fontSize: '16px',
+            fontWeight: 700,
+            cursor: loading ? 'not-allowed' : 'pointer',
+            background: '#8fae8b',
+            color: 'white',
+            boxShadow: '0 12px 28px rgba(80,120,80,0.22)'
+          }}
+        >
+          {loading ? 'Accesso...' : 'Accedi'}
+        </button>
+
+        <p style={{ textAlign: 'center', color: '#9a9188', fontSize: '13px', marginTop: '18px' }}>
+          Solo chi ha le credenziali può vedere e modificare la dashboard.
+        </p>
+      </form>
+    </div>
+  )
+}
+
 // ─── App ──────────────────────────────────────────────────────
 export default function App() {
+  const [session, setSession]   = useState(null)
+  const [authLoading, setAuthLoading] = useState(true)
+
   const [tasks, setTasks]       = useState([])
   const [filtro, setFiltro]     = useState('tutte')
-  const [sezione, setSezione]   = useState('attivita') // 'attivita' | 'spesa' | 'menu'
+  const [sezione, setSezione]   = useState('attivita')
   const [loading, setLoading]   = useState(true)
   const [errore, setErrore]     = useState('')
 
   useEffect(() => {
-    caricaTasks()
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setAuthLoading(false)
+    })
+
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session)
+      setAuthLoading(false)
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
+    }
   }, [])
+
+  useEffect(() => {
+    if (session) {
+      caricaTasks()
+    }
+  }, [session])
+
+  async function logout() {
+    await supabase.auth.signOut()
+    setSession(null)
+    setTasks([])
+  }
 
   async function caricaTasks() {
     setLoading(true)
@@ -131,25 +295,62 @@ export default function App() {
     }
   }
 
+  if (authLoading) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        background: '#f8efe3',
+        color: '#5d554d',
+        fontSize: '18px'
+      }}>
+        Carico Casa HQ...
+      </div>
+    )
+  }
+
+  if (!session) {
+    return <LoginScreen />
+  }
+
   const taskFiltrate = filtraTasks(tasks, filtro)
 
   return (
     <div className={styles.app}>
-      {/* ── Header ── */}
       <header className={styles.header}>
         <div className={styles.headerInner}>
           <div>
             <h1 className={styles.logo}>🏡 Casa HQ</h1>
             <p className={styles.sub}>La dashboard della nostra famiglia</p>
           </div>
-          <div className={styles.dataBadge}>
-            {new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+            <div className={styles.dataBadge}>
+              {new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })}
+            </div>
+
+            <button
+              onClick={logout}
+              style={{
+                border: 'none',
+                borderRadius: '999px',
+                padding: '10px 14px',
+                background: 'rgba(255,255,255,0.75)',
+                color: '#6b5f54',
+                cursor: 'pointer',
+                fontWeight: 700,
+                boxShadow: '0 8px 20px rgba(80,60,40,0.10)'
+              }}
+            >
+              Esci
+            </button>
           </div>
         </div>
       </header>
 
       <main className={styles.main}>
-        {/* ── Stats ── */}
         <section className={styles.section}>
           <StatsCards tasks={tasks} />
         </section>
@@ -163,7 +364,6 @@ export default function App() {
           </section>
         )}
 
-        {/* ── Nav sezioni ── */}
         <nav className={styles.navSezioni}>
           {[
             { id: 'attivita', label: '📋 Attività' },
@@ -180,7 +380,6 @@ export default function App() {
           ))}
         </nav>
 
-        {/* ── Sezione Attività ── */}
         {sezione === 'attivita' && (
           <div className={styles.sezioneAttivita}>
             <TaskForm onAggiungi={aggiungiTask} />
@@ -219,14 +418,12 @@ export default function App() {
           </div>
         )}
 
-        {/* ── Sezione Spesa ── */}
         {sezione === 'spesa' && (
           <section className={styles.section}>
             <GroceryList />
           </section>
         )}
 
-        {/* ── Sezione Menu ── */}
         {sezione === 'menu' && (
           <section className={styles.section}>
             <WeeklyMenu />
