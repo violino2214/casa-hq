@@ -1,0 +1,19 @@
+{
+  "name": "Casa HQ",
+  "short_name": "Casa HQ",
+  "description": "Dashboard privata per organizzare casa, spesa, attività e menu.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f8efe3",
+  "theme_color": "#8fae8b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
