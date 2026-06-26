@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
+import { familyMemberList } from '../data/familyMembers'
 import styles from './TaskForm.module.css'
 
 const categorie = ['Spesa', 'Casa', 'Commissione', 'Menu', 'Famiglia', 'Altro']
-const persone = ['vi', 'marti', 'isa', 'dav', 'tutti']
 const priorita = ['Bassa', 'Media', 'Alta']
 const giorni = ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica']
 
@@ -126,9 +126,9 @@ export default function TaskForm({ onAggiungi }) {
                 onChange={aggiornaCampo}
                 className={styles.select}
               >
-                {persone.map(persona => (
-                  <option key={persona} value={persona}>
-                    {persona}
+                {familyMemberList.map(persona => (
+                  <option key={persona.name} value={persona.name}>
+                    {persona.emoji} {persona.label}
                   </option>
                 ))}
               </select>
